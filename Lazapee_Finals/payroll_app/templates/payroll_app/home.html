@@ -1,0 +1,52 @@
+{% extends 'payroll_app/base.html' %}
+{% block content %}
+
+<div class="container d-flex justify-content-center py-5">
+    <div class="card shadow p-4 w-100" style="max-width: 700px; border-radius: 20px;">
+
+        <!-- Title Banner -->
+        <div class="text-white text-center py-4 rounded mb-4" style="background-color: #1A0951;">
+            <h1 class="fw-bold mb-1">Welcome to Lazapee</h1>
+            <p class="mb-0">Your all-in-one employee and payroll management system</p>
+        </div>
+
+        <!-- Card: Employees -->
+        <div class="card mb-3 border-0 shadow-sm" style="background-color: #ede9f9;">
+            <div class="card-body">
+                <h4 class="card-title">
+                    <span class="me-2">👥</span>
+                    <strong class="text-primary">Employees</strong>
+                </h4>
+                <p class="card-text">Manage your employees' records and overtime.</p>
+                <a href="{% url 'employee_page' %}" class="btn btn-primary">Go to Employees</a>
+            </div>
+        </div>
+
+        <!-- Card: Payslips -->
+        <div class="card mb-3 border-0 shadow-sm" style="background-color: #e7f8ee;">
+            <div class="card-body">
+                <h4 class="card-title">
+                    <span class="me-2">📄</span>
+                    <strong class="text-success">Payslips</strong>
+                </h4>
+                <p class="card-text">Create and view salary summaries and payroll slips.</p>
+                <a href="{% url 'create_payslip' %}" class="btn btn-success">Go to Payslips</a>
+            </div>
+        </div>
+
+        <!-- Card: Manage Account -->
+        <div class="card border-0 shadow-sm" style="background-color: #f2f2f2;">
+            <div class="card-body">
+                <h4 class="card-title">
+                    <span class="me-2">⚙️</span>
+                    <strong class="text-secondary">Manage Account</strong>
+                </h4>
+                <p class="card-text">Change your password or update login details.</p>
+                <a href="{% url 'manage_acc' %}" class="btn btn-secondary">Manage Account</a>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

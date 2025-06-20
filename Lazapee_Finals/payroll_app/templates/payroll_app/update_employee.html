@@ -1,0 +1,81 @@
+{% extends 'payroll_app/base.html' %}
+{% load static %}
+
+
+{% block content %}
+<div class="container mt-5">
+
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+               
+            {% if messages %}
+            {% for message in messages %}
+                {% if 'update_employee' in message.tags %}
+                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endif %}
+            {% endfor %}
+            {% endif %}
+
+
+            <div class="card shadow">
+
+
+                <div class="card-header text-center" style="background-color: rgb(26, 9, 81); color: white;">
+                    <h3>Employees</h3>
+                </div>
+
+
+                <div class="card-body">
+                    <form method="POST"  action="{% url 'update_employee' pk=employee.pk %}">
+                        {% csrf_token %}
+                     
+                        <div class="form-group">
+                            <label for="name"> Name: </label>
+                            <input type="text" class="form-control" id="name" name="name" value="{{employee.name}}" required>
+                        </div>
+
+
+                        <div class="mb-3">
+                            <label for="id_number" class="form-label">ID Number:</label>
+                            <input type="text" class="form-control" id="id_number" name="id_number" value="{{employee.id_number}}" required>
+                        </div>
+
+
+                        <div class="mb-3">
+                            <label for="rate" class="form-label">Rate:</label>
+                            <input type="number" class="form-control" id="rate" name="rate" step="0.01" min="0" oninput="validity.valid||(value='');" value="{{employee.rate}}" required>
+                        </div>
+
+
+                        <div class="mb-3">
+                            <label for="Allowance" class="form-label">Allowance (Optional):</label>
+                            <input type="number" class="form-control" id="Allowance" name="Allowance" step="0.01" min="0" oninput="validity.valid||(value='');"  value="{{employee.Allowance}}">
+                        </div>
+
+                        <div class="d-flex justify-content-center">
+                            <a href="{% url 'employee_page' %}" class="btn btn-primary me-3" style="background-color: rgb(134, 129, 150); border: none;">
+                                Back
+                            </a>
+
+
+                            <button type="submit" class="btn btn-primary" style="background-color: rgb(26, 9, 81); border: none;">
+                               Update
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+{% endblock %}
+
+                       
+               

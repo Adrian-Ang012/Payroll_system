@@ -1,0 +1,41 @@
+{% extends 'payroll_app/base.html' %}
+{% load static %}
+{% block content %}
+
+<div class="container py-5 d-flex justify-content-center">
+    <div class="card shadow-lg w-100" style="max-width: 700px; border-radius: 15px;">
+
+        <!-- Card Header -->
+        <div class="card-header text-white text-center fs-3 fw-bold" style="background-color: #1A0951; border-top-left-radius: 15px; border-top-right-radius: 15px;">
+            Manage Account
+        </div>
+
+        <!-- Card Body -->
+        <div class="card-body bg-light p-5">
+
+            <!-- Username -->
+            <div class="text-center mb-4">
+                <h4 class="fw-bold mb-2">👤 Username:</h4>
+                <p class="fs-3 text-muted">{{ account.username|default:"NONE" }}</p>
+            </div>
+
+            <hr class="mb-4">
+
+            <!-- Vertical Buttons -->
+            <div class="d-grid gap-3">
+                <a href="{% url 'update_password' %}" class="btn btn-warning btn-lg fw-semibold py-2">
+                    🔐 Change Password
+                </a>
+                <a href="{% url 'delete_account' %}" class="btn btn-danger btn-lg fw-semibold py-2">
+                    🗑️ Delete Account
+                </a>
+                <a href="{% url 'employee_page' %}" class="btn btn-secondary btn-lg fw-semibold py-2">
+                    🔙 Back
+                </a>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+{% endblock %}

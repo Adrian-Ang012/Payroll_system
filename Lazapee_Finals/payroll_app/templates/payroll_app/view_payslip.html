@@ -1,0 +1,80 @@
+{% extends 'payroll_app/base.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="container" style="font-size: x-large;">
+    <div class="d-flex justify-content-between align-items-center mt-4 mb-1">
+        <h1>View Payslip</h1>
+        <div class="d-flex gap-2">
+            <a href="{% url 'create_payslip' %}" class="btn btn-secondary" style="font-size: x-large;">Back to Payroll Creation</a>
+            <a href="{% url 'employee_page' %}" class="btn btn-secondary" style="font-size: x-large;">Back to Employees Page</a>
+        </div>
+    </div><br>
+    <div class="row" style="padding: 10px;">
+        <div class="col">NAME: {{ employee.name }} <br> ID NUMBER: {{ employee.id_number }}</div>
+        <div class="col" style="text-align: end;">DATE: {{ payslip.month }} {{ payslip.date_range }}, {{ payslip.year }} <br> PAYSLIP ID: {{ payslip.pk }} </div>
+    </div>
+    <br>
+    <div class="row" style="padding: 10px;">
+        <h3 class="col">EARNINGS:</h3>
+        <div class="col"></div>
+        <h3 class="col" style="text-align: center;">AMOUNT</h3>
+    </div>
+    <div class="row" style="padding: 10px;">
+        <div class="col">Base Pay</div>
+        <div class="col" style="text-align: center;">{{ cycle_rate }}</div>
+        <div class="col"></div>
+    </div>
+    <div class="row" style="padding: 10px;">
+        <div class="col">Allowances</div>
+        <div class="col" style="text-align: center;">{{ payslip.earnings_allowance }}</div>
+        <div class="col"></div>
+    </div>
+    <div class="row" style="padding: 10px;">
+        <div class="col">Overtime</div>
+        <div class="col" style="text-align: center;">{{ payslip.overtime }}</div>
+        <div class="col"></div>
+    </div>
+    <div class="row" style="padding: 10px;">
+        <hr>
+        <h2 class="col">GROSS PAY</h2>
+        <div class="col"></div>
+        <h2 class="col" style="text-align: center;">PhP {{ gross_pay }}</h2>
+        <hr>
+    </div>
+    <div class="row" style="padding: 10px;">
+        <h3 class="col">DEDUCTIONS:</h3>
+        <div class="col"></div>
+        <div class="col"></div>
+    </div>
+    <div class="row" style="padding: 10px;">
+        <div class="col">Withholding Tax</div>
+        <div class="col" style="text-align: center;">{{ payslip.deductions_tax }}</div>
+        <div class="col"></div>
+    </div>
+    <div class="row" style="padding: 10px;">
+        <div class="col">PhilHealth</div>
+        <div class="col" style="text-align: center;">{{ payslip.deductions_health }}</div>
+        <div class="col"></div>
+    </div>
+    <div class="row" style="padding: 10px;">
+        <div class="col">SSS</div>
+        <div class="col" style="text-align: center;">{{ payslip.sss }}</div>
+        <div class="col"></div>
+    </div>
+    <div class="row" style="padding: 10px;">
+        <hr>
+        <h2 class="col">TOTAL DEDUCTIONS</h2>
+        <div class="col"></div>
+        <h2 class="col" style="text-align: center;">PhP {{ total_deductions }}</h2>
+        <hr>
+    </div>
+    <div class="row" style="padding: 10px;">
+        <h1 class="col">NET PAY</h1>
+        <div class="col"></div>
+        <h1 class="col" style="text-align: center;">PhP {{ payslip.total_pay }}</h1>
+    </div>
+</div>
+
+{% endblock %}

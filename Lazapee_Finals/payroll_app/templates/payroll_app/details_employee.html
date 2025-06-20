@@ -1,0 +1,141 @@
+{% extends 'payroll_app/base.html' %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
+<style>
+    body {
+        background-color: #f5f6fa;
+    }
+
+    .card-section {
+        background-color: #fdfcff;
+        border: 1px solid #dedede;
+        border-left: 6px solid #1A0951;
+        border-radius: 10px;
+        box-shadow: 0 0 8px rgba(0, 0, 0, 0.04);
+        margin-bottom: 30px;
+    }
+
+    .section-header {
+        background-color: #e2e0f3;
+        color: #1A0951;
+        padding: 12px 20px;
+        font-weight: bold;
+        font-size: 1.25rem;
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+        border-bottom: 1px solid #dedede;
+    }
+
+    .section-body {
+        padding: 20px;
+    }
+
+    .label {
+        font-weight: 600;
+        margin-bottom: 4px;
+    }
+
+    .value {
+        font-size: 1.2rem;
+    }
+
+    .info-badge {
+        font-size: 1rem;
+        padding: 6px 14px;
+        display: inline-block;
+    }
+
+    .table-striped tbody tr:nth-of-type(odd) {
+        background-color: #f4f2fc;
+    }
+
+    .btn-back {
+        font-size: 1rem;
+        padding: 6px 14px;
+    }
+</style>
+
+<div class="container py-5">
+
+    <!-- Back Button -->
+    <div class="d-flex justify-content-end align-items-center mb-3">
+        <a href="{% url 'employee_page' %}" class="btn btn-outline-secondary btn-back">← Back</a>
+    </div>
+
+    <!-- Employee Summary Card -->
+    <div class="card-section">
+        <div class="section-header">Employee Summary</div>
+        <div class="section-body">
+            <div class="row text-start">
+                <!-- Column 1 -->
+                <div class="col-md-4 mb-4">
+                    <div class="mb-3">
+                        <div class="label"><i class="bi bi-person-fill"></i> Name:</div>
+                        <div class="value">{{ employee.name }}</div>
+                    </div>
+                    <div>
+                        <div class="label"><i class="bi bi-card-text"></i> ID:</div>
+                        <div class="value">{{ employee.id_number }}</div>
+                    </div>
+                </div>
+
+                <!-- Column 2 -->
+                <div class="col-md-4 mb-4">
+                    <div class="mb-3">
+                        <div class="label"><i class="bi bi-cash-coin"></i> Rate:</div>
+                        <span class="badge bg-dark text-white info-badge">PhP {{ employee.rate }}</span>
+                    </div>
+
+                    <div>
+                        <div class="label"><i class="bi bi-gift"></i> Allowance:</div>
+                        <span class="badge bg-success text-white info-badge">PhP {{ employee.Allowance }}</span>
+                    </div>
+                </div>
+
+                <!-- Column 3 -->
+                <div class="col-md-4 mb-4">
+                    <div class="mb-3">
+                        <div class="label"><i class="bi bi-clock-history"></i> Overtime Pay:</div>
+                        <span class="badge bg-warning text-dark info-badge">PhP {{ employee.overtime_pay }}</span>
+                    </div>
+
+                    <div>
+                        <div class="label"><i class="bi bi-stopwatch"></i> Overtime Hours:</div>
+                        <span class="badge bg-secondary text-white info-badge">{{ employee.overtime_hours }} hrs</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Payroll History Section -->
+    <div class="card-section">
+        <div class="section-header">Payroll History</div>
+        <div class="section-body">
+            {% if payslip %}
+                {% for payslip in payslip %}
+                    <table class="table table-hover table-bordered table-striped align-middle mb-4">
+                        <tr>
+                            <td><strong>Payslip ID:</strong> {{ payslip.pk }}</td>
+                            <td><strong>Pay Cycle:</strong> {{ payslip.pay_cycle }}</td>
+                            <td rowspan="2" class="text-center" style="width: 180px;">
+                                <a href="{% url 'view_payslip' payslip.pk %}" class="btn btn-info w-100">View Details</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Date Range:</strong> {{ payslip.month }} {{ payslip.date_range }}, {{ payslip.year }}</td>
+                            <td><strong>Net Pay:</strong> <span class="badge bg-success fs-6">PhP {{ payslip.total_pay }}</span></td>
+                        </tr>
+                    </table>
+                {% endfor %}
+            {% else %}
+                <p class="text-muted">No payroll records available for this employee.</p>
+            {% endif %}
+        </div>
+    </div>
+
+</div>
+{% endblock %}
