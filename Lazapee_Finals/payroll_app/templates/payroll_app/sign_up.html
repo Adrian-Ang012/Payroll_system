@@ -12,14 +12,17 @@
 
     <style>
         body {
-            background-color: #f0f2f5;
+            background: url("{% static 'payroll_app/background.jpg' %}") no-repeat center center fixed;
+            background-size: cover;
         }
 
         .signup-card {
             max-width: 600px;
             border-radius: 12px;
-            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
             min-height: 650px;
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.93);
         }
 
         .card-header-custom {
@@ -41,6 +44,23 @@
             font-size: 1.1rem;
             padding: 14px;
         }
+
+        .brand-logo {
+            width: 120px;
+        }
+
+        .brand-name {
+            font-size: 3rem;
+            font-weight: 800;
+            color: white;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.6);
+        }
+
+        @media (max-width: 768px) {
+            .brand-name {
+                font-size: 2rem;
+            }
+        }
     </style>
 </head>
 
@@ -59,8 +79,11 @@
 {% endif %}
 
 <!-- Sign Up Card -->
-<div class="container py-5 d-flex justify-content-center">
-    <div class="card signup-card bg-white w-100">
+<div class="container py-5 d-flex flex-column align-items-center justify-content-center text-center">
+
+    <img src="{% static 'payroll_app/logo_pawroll.png' %}" class="brand-logo mb-2">
+
+    <div class="card signup-card w-100">
 
         <!-- Header -->
         <div class="card-header-custom">Create a New Account</div>
@@ -90,7 +113,6 @@
                     <input type="password" name="password" class="form-control form-control-lg" placeholder="New password" required>
                 </div>
 
-                <!-- Slightly Lowered Buttons -->
                 <div class="d-grid mb-4">
                     <button type="submit" class="btn btn-success btn-lg">Sign Up</button>
                 </div>

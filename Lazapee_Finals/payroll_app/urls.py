@@ -27,6 +27,7 @@ urlpatterns = [
     path('employee/add_overtime/<int:pk>/', views.add_overtime, name='add_overtime'),
     path('employee/reset_overtime/<int:pk>/', views.reset_overtime, name='reset_overtime'),
     path('create_payslip/', views.create_payslip, name='create_payslip'),
+    path('delete_payslip/delete/<int:pk>', views.delete_payslip, name='delete_payslip'),
     path('delete_employee/<int:pk>/', views.delete_employee, name='delete_employee'),
     path('view_payslip/<int:pk>', views.view_payslip, name='view_payslip'),
     path('', views.login, name='login'),
@@ -36,6 +37,5 @@ urlpatterns = [
     path('update_password/', views.update_password, name='update_password'),
     path('delete_account/', views.delete_account, name='delete_account'),
     path('details_employee/<int:pk>/', views.details_employee, name='details_employee'),
-    path('logout/', views.log_out, name='log_out')
-
+    path('logout/', views.log_out, name='log_out'),
 ]

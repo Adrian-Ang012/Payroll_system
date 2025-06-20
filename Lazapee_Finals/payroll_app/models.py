@@ -10,6 +10,7 @@ class Employee(models.Model):
     overtime_hours = models.FloatField(null=True, blank=True)
     Allowance = models.FloatField(null=True, blank=True)
 
+
     def getName(self):
         return self.name
 

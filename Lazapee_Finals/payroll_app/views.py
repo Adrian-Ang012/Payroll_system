@@ -1,10 +1,15 @@
 from django.shortcuts import render, redirect, get_object_or_404 
 from .models import Employee, Payslip, Account
 from django.contrib import messages 
+from django.db.models.functions import Lower
+from django.template.loader import get_template
+from django.http import HttpResponse
+import tempfile
+
+
 
 
 global_sort = 'name ↑'
-
 account_signed_in = None
 
 def home_page(request):
@@ -31,10 +36,16 @@ def employee_page(request):
 
         if '↑' in sort:
             field = sort.replace(' ↑', '').strip()
-            employees = Employee.objects.all().order_by(field)
+            if field == 'name':
+                employees = Employee.objects.all().annotate(name_lower=Lower('name')).order_by('name_lower')
+            else:
+                employees = Employee.objects.all().order_by(field)
         else:
             field = sort.replace(' ↓', '').strip()
-            employees = Employee.objects.all().order_by(f'-{field}')
+            if field == 'name':
+                employees = Employee.objects.all().annotate(name_lower=Lower('name')).order_by('-name_lower')
+            else:
+                employees = Employee.objects.all().order_by(f'-{field}')
 
         return render(request, 'payroll_app/employee_page.html', {
             'employees': employees,
@@ -44,6 +55,7 @@ def employee_page(request):
 
 def create_employee(request):
     global account_signed_in
+
 
     if account_signed_in == None:
         messages.warning(request,"You need to log in first", extra_tags='login')
@@ -256,7 +268,7 @@ def login(request):
             account = Account.objects.get(username=username)
             if account.password == password:
                 account_signed_in = account.pk  
-                return redirect('employee_page')  
+                return redirect('home')  
             else:
                 messages.warning(request, "Wrong password")
                 return redirect('login')
@@ -300,31 +312,43 @@ def sign_up(request):
     return render(request, 'payroll_app/sign_up.html')
 
 def delete_account(request):
-    Account.objects.filter(pk=request.user.pk).delete()
-    messages.warning(request, "Account deleted.")
+    global account_signed_in
+
+    if account_signed_in is None:
+        messages.warning(request, "You need to log in first.")
+        return redirect('login')
+
+    # Delete the account
+    Account.objects.filter(pk=account_signed_in).delete()
+    
+    # Log the user out
+    account_signed_in = None
+    messages.warning(request, "Your account has been deleted.")
     return redirect('login')
 
 def update_password(request):
     global account_signed_in
 
-    if account_signed_in == None:
-        messages.warning(request,"You need to log in first", extra_tags='login')
+    if account_signed_in is None:
+        messages.warning(request, "You need to log in first", extra_tags='login')
         return redirect('login')
-    else:
-        pk = request.session.get('pk')
-        account = get_object_or_404(Account, pk=pk)
 
-        if(request.method=='POST'):
-            newpass1 = request.POST.get('newpass1')
-            newpass2 = request.POST.get('newpass2')
-            if newpass1 == newpass2:
-                Account.objects.filter(pk=pk).update(password=newpass1)
-                messages.success(request, "Password changed successfully, Don't forget it again :).")
-                return redirect('login') 
-            else: #give a warning that the newpassword is not the same
-                messages.error(request, "they not the same man")
+    account = get_object_or_404(Account, pk=account_signed_in)
 
-        return render(request, 'payroll_app/update_password.html', {'account': account})
+    if request.method == 'POST':
+        newpass1 = request.POST.get('newpass1')
+        newpass2 = request.POST.get('newpass2')
+
+        if newpass1 == newpass2:
+            account.password = newpass1  
+            account.save()
+            messages.success(request, "Password changed successfully. Don't forget it again :)")
+            return redirect('login')
+        else:
+            messages.error(request, "Passwords do not match.")
+
+    return render(request, 'payroll_app/update_password.html', {'account': account})
+
 
 
 def details_employee(request,pk):
@@ -337,3 +361,4 @@ def details_employee(request,pk):
         employee = get_object_or_404(Employee, pk=pk)
         payslip = Payslip.objects.filter(id_number=employee.pk)
         return render(request, 'payroll_app/details_employee.html', {'employee':employee, 'payslip':payslip})
+    

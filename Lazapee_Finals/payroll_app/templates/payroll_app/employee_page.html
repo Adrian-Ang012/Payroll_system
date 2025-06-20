@@ -14,6 +14,20 @@
     .table-striped > tbody > tr:nth-of-type(odd) {
         background-color: #f8f9fb;
     }
+
+    @media (max-width: 768px) {
+        .form-select, .btn, input.form-control {
+            font-size: 14px !important;
+        }
+
+        .fs-5 {
+            font-size: 15px !important;
+        }
+    }
+
+    .table-responsive {
+        border-radius: 8px;
+    }
 </style>
 
 <div class="container">
@@ -29,8 +43,6 @@
         {% endfor %}
     {% endif %}
 
-    
-    
     <form method="POST" class="d-flex justify-content-between align-items-center mt-4 mb-3">
         {% csrf_token %}
         <h1 class="mb-0">Employees</h1>
@@ -41,72 +53,66 @@
                 <option value="name ↑">Alphabetical ↑ (Name)</option>
                 <option value="name ↓">Alphabetical ↓ (Name)</option>
                 <option value="rate ↑">Rate ↑</option>
-                <option value="rate ↓">Rate ↓ </option>
+                <option value="rate ↓">Rate ↓</option>
                 <option value="Allowance ↑">Allowance ↑</option>
                 <option value="Allowance ↓">Allowance ↓</option>
                 <option value="overtime_pay ↑">Overtime ↑</option>
-                <option value="overtime_pay ↓ ">Overtime ↓ </option>
+                <option value="overtime_pay ↓">Overtime ↓</option>
                 <option value="overtime_hours ↑">Overtime hours ↑</option>
-                <option value="overtime_hours ↓ ">Overtime hours ↓ </option>
+                <option value="overtime_hours ↓">Overtime hours ↓</option>
             </select>
             
             <a href="{% url 'create_employee' %}" class="btn btn-secondary">+New Employee</a>
             <a href="{% url 'home' %}" class="btn btn-secondary">Home</a>
-            
         </div>
     </form>
 
-    
+    <div class="table-responsive" style="max-height: 600px; overflow-y: auto;">
+        <table class="table table-bordered table-striped fs-5">
+            <thead class="table-dark sticky-top">
+                <tr>
+                    <th>Name</th>
+                    <th>ID Number</th>
+                    <th>Rate</th>
+                    <th>Allowance</th>
+                    <th>Overtime pay</th>
+                    <th>Overtime hour</th>
+                    <th>Options</th>
+                </tr>
+            </thead>
 
-    <table class="table table-bordered table-striped fs-5">
-        
-        <thead class="table-dark">
-            <tr>
-                <th>Name</th>
-                <th>ID Number</th>
-                <th>Rate</th>
-                <th>Allowance</th>
-                <th>Overtime pay</th>
-                <th>Overtime hour</th>
-                <th>Options</th>
-            </tr>
-        </thead>
-
-        <tbody>
-            {% for employee in employees %}
-            <tr>
-                <td>{{ employee.name }}</td>
-                <td>{{ employee.id_number }}</td>
-                <td>{{ employee.rate }}</td>
-                <td>{{ employee.Allowance|default:"0" }}</td>
-                <td>{{ employee.overtime_pay|default:"0" }}</td>
-                <td>{{ employee.overtime_hours|default:"0" }}</td>
-
-                <td class="text-center">
-                    <div class="mb-2 d-flex justify-content-center gap-2">
-                        <a href="{% url 'details_employee' employee.pk %}" class="btn btn-info btn-sm">Details</a>
-                        <a href="{% url 'update_employee' employee.pk %}" class="btn btn-primary btn-sm">Update</a>
-                        <a href="{% url 'delete_employee' employee.pk %}" class="btn btn-danger btn-sm">Delete</a>
-                    </div>
-                    
-                    <div class="mb-2 d-flex justify-content-center gap-2">
-                        <form method="POST" action="{% url 'add_overtime' employee.pk %}">
-                        {% csrf_token %}
-                        <div class="mb-2 d-flex justify-content-center gap-2">
-                            <input type="number" name="overtime_hours" placeholder="Overtime Hours"
-                                   class="form-control form-control-sm" step="0.1" min="0" oninput="validity.valid||(value='');"
-                                   required style="width: 130px;">
-                            <button type="submit" class="btn btn-success btn-sm">Add Overtime</button>
+            <tbody>
+                {% for employee in employees %}
+                <tr>
+                    <td>{{ employee.name }}</td>
+                    <td>{{ employee.id_number }}</td>
+                    <td>{{ employee.rate }}</td>
+                    <td>{{ employee.Allowance|default:"0" }}</td>
+                    <td>{{ employee.overtime_pay|default:"0" }}</td>
+                    <td>{{ employee.overtime_hours|default:"0" }}</td>
+                    <td class="text-center">
+                        <!-- Action Buttons Row 1: Details | Update | Delete -->
+                        <div class="d-flex flex-wrap justify-content-center gap-2 mb-2">
+                            <a href="{% url 'details_employee' employee.pk %}" class="btn btn-info btn-sm px-3">Details</a>
+                            <a href="{% url 'update_employee' employee.pk %}" class="btn btn-primary btn-sm px-3">Update</a>
+                            <a href="{% url 'delete_employee' employee.pk %}" class="btn btn-danger btn-sm px-3">Delete</a>
                         </div>
+
+                        <!-- Action Buttons Row 2: Overtime Field | Add | Reset -->
+                        <form method="POST" action="{% url 'add_overtime' employee.pk %}" class="d-flex flex-wrap justify-content-center align-items-center gap-2">
+                            {% csrf_token %}
+                            <input type="number" name="overtime_hours" placeholder="Hours"
+                                class="form-control form-control-sm text-center" step="0.1" min="0"
+                                oninput="validity.valid||(value='');" required style="width: 100px; max-width: 120px;">
+                            <button type="submit" class="btn btn-success btn-sm">Add Hours</button>
+                            <a href="{% url 'reset_overtime' employee.pk %}" class="btn btn-info btn-sm">Reset</a>
                         </form>
-                        <div class="mb-2 d-flex justify-content-center gap-2">
-                            <a href="{% url 'reset_overtime' employee.pk %}" class="btn btn-info btn-sm">Reset Overtime</a>
-                        </div>
-                    </div>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+                    </td>
+
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </div>
 {% endblock %}
