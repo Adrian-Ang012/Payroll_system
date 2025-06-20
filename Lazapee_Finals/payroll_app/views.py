@@ -74,10 +74,13 @@ def create_employee(request):
 
 def delete_employee(request, pk):
     employee = get_object_or_404(Employee, pk=pk)
-    employee.delete()
-    messages.success(request, "Employee deleted successfully.", extra_tags='employee_page')
-    return redirect ('employee_page')
 
+    if request.method == "POST":
+        employee.delete()
+        messages.success(request, "Employee deleted successfully.", extra_tags='employee_page')
+        return redirect('employee_page')  # redirect after deletion
+
+    return render(request, 'payroll_app/delete_employee.html', {'employee': employee})
 def update_employee(request, pk):
     global account_signed_in
     
