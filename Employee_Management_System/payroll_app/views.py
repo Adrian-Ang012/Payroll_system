@@ -2,15 +2,9 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .models import Employee, Payslip, Account
 from django.contrib import messages 
 from django.db.models.functions import Lower
-from django.template.loader import get_template
-from django.http import HttpResponse
-import tempfile
-
-
-
+from django.contrib.auth.hashers import make_password, check_password
 
 global_sort = 'name ↑'
-account_signed_in = None
 
 def home_page(request):
     return render(request, 'payroll_app/home.html')
@@ -256,96 +250,99 @@ def view_payslip(request, pk):
         return render(request, 'payroll_app/view_payslip.html', {'payslip':payslip, 'employee':employee, 'gross_pay':gross_pay, 'total_deductions':total_deductions, 'cycle_rate':cycle_rate})
 
 
-
+account_signed_in = None  # Global variable to store the PK
 
 def login(request):
-    global account_signed_in  
+    global account_signed_in
+
     if request.method == 'POST':
         username = request.POST.get('username', '').strip().lower()
         password = request.POST.get('password')
 
         try:
             account = Account.objects.get(username=username)
-            if account.password == password:
-                account_signed_in = account.pk  
-                return redirect('home')  
+            if check_password(password, account.password):
+                account_signed_in = account.pk
+                return redirect('home')
             else:
                 messages.warning(request, "Wrong password")
-                return redirect('login')
         except Account.DoesNotExist:
             messages.warning(request, "Account does not exist")
-            return redirect('login')
-          
+        return redirect('login')
+
+    # Already logged in
+    context = {}
+    if account_signed_in is not None:
+        account = Account.objects.get(pk=account_signed_in)
+        context['account'] = account
+    return render(request, 'payroll_app/login.html', context)
 
 
-    if account_signed_in != None:
-        pk = account_signed_in
-        account = Account.objects.get(pk=pk)
-        return render(request, 'payroll_app/login.html', {'account': account})
-    else:
-        return render(request, 'payroll_app/login.html')
-
-def log_out(request): 
+def log_out(request):
     global account_signed_in
     account_signed_in = None
     return redirect('login')
 
+
 def manage_acc(request):
     global account_signed_in
-
-    if account_signed_in == None:
-        messages.warning(request,"You need to log in first", extra_tags='login')
+    if account_signed_in is None:
+        messages.warning(request, "You need to log in first.")
         return redirect('login')
-    else:
-        pk = account_signed_in
-        account = Account.objects.get(pk=pk)
-        return render(request, 'payroll_app/manage_acc.html', {'account': account})
+    
+    account = Account.objects.get(pk=account_signed_in)
+    return render(request, 'payroll_app/manage_acc.html', {'account': account})
+
 
 def sign_up(request):
     if request.method == 'POST':
         username = request.POST.get('username').strip().lower()
         password = request.POST.get('password')
 
-        Account.objects.create(username=username, password=password)
-        messages.success(request, "Account created successfully")
+        hashed_password = make_password(password)
+        Account.objects.create(username=username, password=hashed_password)
+        messages.success(request, "Account created successfully.")
         return redirect('login')
     return render(request, 'payroll_app/sign_up.html')
 
+
 def delete_account(request):
+    global account_signed_in
+    if account_signed_in is None:
+        messages.warning(request, "You need to log in first.")
+        return redirect('login')
+
+    Account.objects.filter(pk=account_signed_in).delete()
+    account_signed_in = None
+    messages.warning(request, "Your account has been deleted.")
+    return redirect('login')
+
+
+from django.contrib.auth.hashers import check_password, make_password
+
+def update_password(request):
     global account_signed_in
 
     if account_signed_in is None:
         messages.warning(request, "You need to log in first.")
         return redirect('login')
 
-    # Delete the account
-    Account.objects.filter(pk=account_signed_in).delete()
-    
-    # Log the user out
-    account_signed_in = None
-    messages.warning(request, "Your account has been deleted.")
-    return redirect('login')
-
-def update_password(request):
-    global account_signed_in
-
-    if account_signed_in is None:
-        messages.warning(request, "You need to log in first", extra_tags='login')
-        return redirect('login')
-
     account = get_object_or_404(Account, pk=account_signed_in)
 
     if request.method == 'POST':
+        opass = request.POST.get('opass')
         newpass1 = request.POST.get('newpass1')
         newpass2 = request.POST.get('newpass2')
 
-        if newpass1 == newpass2:
-            account.password = newpass1  
-            account.save()
-            messages.success(request, "Password changed successfully. Don't forget it again :)")
-            return redirect('login')
+        if not check_password(opass, account.password):
+            messages.error(request, "Incorrect old password.")
+        elif newpass1 != newpass2:
+            messages.error(request, "New passwords do not match.")
         else:
-            messages.error(request, "Passwords do not match.")
+            account.password = make_password(newpass1)
+            account.save()
+            messages.success(request, "Password updated successfully.")
+            return redirect('manage_acc')  # or wherever you want
 
     return render(request, 'payroll_app/update_password.html', {'account': account})
 

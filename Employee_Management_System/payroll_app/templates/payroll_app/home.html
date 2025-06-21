@@ -1,5 +1,17 @@
 {% extends 'payroll_app/base.html' %} 
+{% load static %}
+
+
+
 {% block content %}
+<style>
+    body {
+            background: url("{% static 'payroll_app/background.jpg' %}") no-repeat center center fixed;
+            background-size: cover;
+        }
+
+
+</style>
 
 <div class="container d-flex justify-content-center py-5">
     <div class="card shadow p-4 w-100" style="max-width: 900px; border-radius: 20px;">

@@ -51,7 +51,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'Lazapee.urls'
+ROOT_URLCONF = 'Employee_Management_System.urls'
 
 TEMPLATES = [
     {
@@ -69,7 +69,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'Lazapee.wsgi.application'
+WSGI_APPLICATION = 'Employee_Management_System.wsgi.application'
 
 
 # Database
