@@ -5,7 +5,6 @@ from django.db.models.functions import Lower
 from django.contrib.auth.hashers import make_password, check_password
 
 global_sort = 'name ↑'
-
 def home_page(request):
     return render(request, 'payroll_app/home.html')
 
@@ -318,8 +317,6 @@ def delete_account(request):
     return redirect('login')
 
 
-from django.contrib.auth.hashers import check_password, make_password
-
 def update_password(request):
     global account_signed_in
 
@@ -342,7 +339,7 @@ def update_password(request):
             account.password = make_password(newpass1)
             account.save()
             messages.success(request, "Password updated successfully.")
-            return redirect('manage_acc')  # or wherever you want
+            return redirect('manage_acc')  
 
     return render(request, 'payroll_app/update_password.html', {'account': account})
 
