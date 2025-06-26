@@ -92,14 +92,14 @@
                     <td>{{ employee.overtime_pay|default:"0" }}</td>
                     <td>{{ employee.overtime_hours|default:"0" }}</td>
                     <td class="text-center">
-                        <!-- Action Buttons Row 1: Details | Update | Delete -->
+                        
                         <div class="d-flex flex-wrap justify-content-center gap-2 mb-2">
                             <a href="{% url 'details_employee' employee.pk %}" class="btn btn-info btn-sm px-3">Details</a>
                             <a href="{% url 'update_employee' employee.pk %}" class="btn btn-primary btn-sm px-3">Update</a>
                             <a href="{% url 'delete_employee' employee.pk %}" class="btn btn-danger btn-sm px-3">Delete</a>
                         </div>
 
-                        <!-- Action Buttons Row 2: Overtime Field | Add | Reset -->
+                        
                         <form method="POST" action="{% url 'add_overtime' employee.pk %}" class="d-flex flex-wrap justify-content-center align-items-center gap-2">
                             {% csrf_token %}
                             <input type="number" name="overtime_hours" placeholder="Hours"
